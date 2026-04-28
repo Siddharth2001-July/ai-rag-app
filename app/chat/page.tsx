@@ -133,9 +133,18 @@ export default function ChatPage() {
                 className="mx-auto w-full min-h-0 max-w-3xl flex-1 overflow-y-auto py-8"
               >
                 <div className="space-y-8">
-                  {messages.map((m) => (
-                    <MessageView key={m.id} message={m} />
+                  {messages.map((m, i) => (
+                    <MessageView
+                      key={m.id}
+                      message={m}
+                      isLast={i === messages.length - 1}
+                      isBusy={isBusy}
+                    />
                   ))}
+                  {/* When the user just sent and no assistant message exists
+                      yet, show the indicator outside the message list. Once
+                      the assistant message arrives (even empty), MessageView
+                      handles the thinking-dots state itself. */}
                   {isBusy &&
                     messages[messages.length - 1]?.role === "user" && (
                       <ThinkingIndicator />
@@ -224,7 +233,15 @@ function preprocessCitations(text: string): string {
   return text.replace(/\[([^\]\n]+?\.md)\]/g, "[$1](#cite)");
 }
 
-function MessageView({ message }: { message: ChatMessage }) {
+function MessageView({
+  message,
+  isLast,
+  isBusy,
+}: {
+  message: ChatMessage;
+  isLast: boolean;
+  isBusy: boolean;
+}) {
   const text = message.parts
     .filter((p) => p.type === "text")
     .map((p) => (p as { type: "text"; text: string }).text)
@@ -240,11 +257,15 @@ function MessageView({ message }: { message: ChatMessage }) {
     );
   }
 
-  // Assistant message that failed before producing any text — show a small
-  // inline indicator instead of an empty bubble with orphaned sources.
-  // The toast already explained what went wrong; this is the breadcrumb in
-  // the conversation itself so the user can see where the failure was.
+  // Empty assistant message — could be either streaming-in-progress (show
+  // thinking dots) or finalized-with-no-text (show failure breadcrumb).
+  // The first case happens when the server has emitted "start" but no
+  // tokens yet; the second when the LLM call errored before producing
+  // any text.
   if (!text.trim()) {
+    if (isLast && isBusy) {
+      return <ThinkingIndicator />;
+    }
     return (
       <div className="flex items-center gap-2 text-xs text-white/40">
         <span className="inline-block h-1.5 w-1.5 rounded-full bg-red-400/70" />
