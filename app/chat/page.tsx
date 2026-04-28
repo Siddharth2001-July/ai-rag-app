@@ -54,6 +54,9 @@ const SUGGESTIONS = [
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  // Tracks the last query we sent so we can drop it back into the input
+  // box if it failed — saves the user from retyping.
+  const lastSentRef = useRef<string>("");
 
   const { messages, sendMessage, status } = useChat<ChatMessage>({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -63,6 +66,15 @@ export default function ChatPage() {
       // it — errors are important enough that a 4-second auto-dismiss can
       // be missed if the user looked away.
       toast.error(title, { description, duration: 60_000 });
+
+      // Drop the failed query back into the input so the user can retry
+      // with one keystroke. Use the functional setter so we don't clobber
+      // anything they've already started typing while waiting.
+      const failed = lastSentRef.current;
+      if (failed) {
+        setInput((current) => (current.trim() ? current : failed));
+        lastSentRef.current = "";
+      }
     },
   });
 
@@ -77,6 +89,7 @@ export default function ChatPage() {
   function send(text: string) {
     const trimmed = text.trim();
     if (!trimmed || isBusy) return;
+    lastSentRef.current = trimmed;
     sendMessage({ text: trimmed });
     setInput("");
   }
