@@ -21,6 +21,8 @@ Nutrient is a software company that provides document software solutions to busi
 
 In March 2026, Siddharth was promoted from Solutions Engineer to Solutions Consultant. The Consultant role expands on the Engineer role by taking on a more strategic posture in the sales cycle — guiding clients on solution architecture, multi-product workflows, and longer-term platform decisions, in addition to the technical-fit and integration work he already did as an Engineer.
 
-## Notable initiative
+## Notable initiatives
 
-While in the Solutions Engineer role, Siddharth initiated and built a new product offering on top of Nutrient's existing Web SDK technology to open a new revenue stream — a **documents solution for Salesforce** that brings PDF, Office, and image viewing into the Salesforce ecosystem to serve clients on that platform.
+**1. Salesforce Documents Solution (new revenue stream).** Siddharth initiated and built a new product offering on top of Nutrient's existing Web SDK to open a new revenue stream — a documents solution for Salesforce that brings PDF, Office, and image viewing into the Salesforce ecosystem to serve clients on that platform.
+
+**2. Signing Demo (the canonical reference for Nutrient's #1 use case).** Document signing is the most-requested customer use case at Nutrient. Siddharth built and open-sourced [the Signing Demo](https://github.com/PSPDFKit/signing-demo-lite) — a complete reference implementation covering multi-user signing workflows, three electronic signature types (typed / drawn / image), initials, and cryptographic Digital Signatures, all on top of Nutrient's Web SDK. It now lives under Nutrient's official GitHub org and is one of the company's most-visited developer-relations resources. See `projects/signing-demo.md` for the full breakdown.
